@@ -1,0 +1,10 @@
+{
+  "name": "iot_sample_application",
+  "version": "1.0.0",
+  "description": "Container for best practices for Node.js/Typescript backend app",
+  "main": "index.js",
+  "repository": "git@github.com:Firellon/iot_sample_application.git",
+  "author": "Pavel Tugolukov <pavel@freighthub.com>",
+  "license": "MIT",
+  "private": false
+}
