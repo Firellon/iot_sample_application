@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "lib": ["es2018", "dom"],
+        "outDir": "dist",
+        "typeRoots": [
+            "node_modules/@types",
+            "typings"
+        ],
+    },
+    "include": ["bin/**/*", "src/**/*", "typings/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}

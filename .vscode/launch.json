@@ -1,0 +1,21 @@
+{
+    "version": "1.0.0",
+    "configurations": [
+        {
+            "name": "Launch API",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/cli.ts",
+            "console": "internalConsole",
+            "outputCapture": "std",
+            "stopOnEntry": false,
+            "args": ["server"],
+            "cwd": "${workspaceRoot}",
+            "runtimeArgs": ["--harmony", "--nolazy"],
+            "envFile": "${workspaceRoot}/.env",
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+            "protocol": "auto"
+        }
+    ]
+}
