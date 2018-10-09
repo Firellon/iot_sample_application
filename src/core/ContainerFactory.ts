@@ -1,11 +1,13 @@
 import 'reflect-metadata'
 
-import { Container, interfaces } from 'inversify'
+import { Container } from 'inversify'
 import { Logger, createLogger, LoggerOptions } from 'winston'
 
-import { TYPES } from '../inversify.types'
 import { ApplicationFactory, IApplicationFactory } from './ApplicationFactory'
-import { LoggerFactory } from '../logging';
+import { CarRepository } from '../car'
+import { CarRouter } from '../car/CarRouter'
+import { LoggerFactory } from '../logging'
+import { TYPES } from '../inversify.types'
 
 export interface IContainerFactory {
     createApiContainer(): Container
@@ -23,34 +25,30 @@ export class ContainerFactory implements IContainerFactory {
         const container = new Container()
 
         this.bindLoggingModules(container)
+        this.bindCarModules(container)
         this.bindCoreModules(container)
-        this.logger.info('createApiContainer > finished')
+
+        this.logger.info('createApiContainer > successfully finished')
         return container
     }
 
     private bindLoggingModules(container: Container) {
         container.bind(TYPES.Logger).toConstantValue(this.logger)
-        container.bind(TYPES.LoggerFactory).toFactory<Logger>(() => {
-            return (options?: LoggerOptions) => createLogger(options)
+        container.bind(TYPES.LoggerFactory).toDynamicValue(() => {
+            return new LoggerFactory('info')
         })
     }
 
-    // private bindDbModules(container: Container) {
-    //     // Repositories
-    //         container
-    //             .bind<IdGenerator>(TYPES.IdGenerator)
-    //             .to(IdGenerator)
-    //             .inSingletonScope()
-    //         container
-    //             .bind<interfaces.Factory<DefaultRepository<any>>>(TYPES.DefaultRepositoryFactory)
-    //             .toFactory<DefaultRepository<any>>((context: interfaces.Context) => {
-    //                 return <T extends object>(collectionName: CollectionName) =>
-    //                     new DefaultRepository<T>(
-    //                         context.container.get<IdGenerator>(TYPES.IdGenerator),
-    //                         collectionName
-    //                     )
-    //             })
-    // }
+    private bindCarModules(container: Container) {
+        container
+            .bind(TYPES.CarRepository)
+            .to(CarRepository)
+            .inSingletonScope()
+        container
+            .bind(TYPES.CarRouter)
+            .to(CarRouter)
+            .inSingletonScope()
+    }
 
     private bindCoreModules(container: Container) {
         container
