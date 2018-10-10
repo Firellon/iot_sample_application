@@ -1,57 +1,41 @@
-import { injectable } from 'inversify'
-
-import { Car } from './Car'
-import { Maybe } from '../core/Maybe'
+import { injectable, inject } from 'inversify'
 import _ = require('lodash')
 
-export interface ICarRepository {
-    findAll(): Car[]
-    findById(id: string): Maybe<Car>
-    insertOne(car: Car): Car
-    updateOne(id: string, car: Partial<Car>): Car
-    deleteOne(id: string): void
-}
+import { Car } from './Car'
+import { TYPES } from '../inversify.types'
+import { DefaultRepository, IDefaultRepository } from '../core/DefaultRepository'
+import { WithId, Maybe } from '../core'
+
+export interface ICarRepository extends IDefaultRepository<Car> {}
 
 @injectable()
 export class CarRepository implements ICarRepository {
-    private db: Map<string, Car> = new Map()
-    private idCounter = 0
+    private defaultRepository: DefaultRepository<Car>
 
-    private getNextId(): string {
-        this.idCounter++
-        return this.idCounter.toString()
+    constructor(
+        @inject(TYPES.DefaultRepositoryFactory)
+        defaultRepositoryFactory: <T extends WithId>(name: string) => DefaultRepository<T>
+    ) {
+        this.defaultRepository = defaultRepositoryFactory<Car>('Car')
     }
 
     findAll(): Car[] {
-        return Array.from(this.db.values())
+        return this.defaultRepository.findAll()
     }
 
     findById(id: string): Maybe<Car> {
-        return this.db.get(id)
+        return this.defaultRepository.findById(id)
     }
 
     insertOne(car: Car): Car {
-        const newId = this.getNextId()
-        car.id = newId
-        this.db.set(newId, car)
-        return car
+        return this.defaultRepository.insertOne(car)
     }
 
-    updateOne(id: string, carUpdate: Partial<Car>): Car {
-        const existingCar = this.findById(id)
-        if (!existingCar) {
-            throw new Error(`Car ${id} not found`)
-        }
-        const car = _.merge(existingCar, carUpdate, { id })
-        this.db.set(id, car)
-        return car
+    updateById(id: string, carUpdate: Partial<Car>): Car {
+        return this.defaultRepository.updateById(id, carUpdate)
     }
 
-    deleteOne(id: string): void {
-        const existingCar = this.findById(id)
-        if (!existingCar) {
-            throw new Error(`Car ${id} not found`)
-        }
-        this.db.delete(id)
+    deleteById(id: string): void {
+        return this.defaultRepository.deleteById(id)
     }
 }

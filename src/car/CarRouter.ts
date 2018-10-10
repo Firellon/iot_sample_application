@@ -1,12 +1,13 @@
 import * as Router from 'koa-router'
+import { IRouterContext } from 'koa-router'
 import { injectable, inject } from 'inversify'
 
-import { TYPES } from '../inversify.types'
-import { IRouterContext } from 'koa-router'
-import { IRouter } from '../core/IRouter'
-import { ILogger, ILoggerFactory } from '../logging'
-import { ICarRepository } from './CarRepository'
 import { Car } from './Car'
+import { ICarRepository } from './CarRepository'
+import { ILogger, ILoggerFactory } from '../logging'
+import { IRouter } from '../core'
+import { Location, ILocationRepository } from '../location'
+import { TYPES } from '../inversify.types'
 
 @injectable()
 export class CarRouter implements IRouter {
@@ -16,17 +17,22 @@ export class CarRouter implements IRouter {
     // prettier-ignore
     constructor(
         @inject(TYPES.LoggerFactory) loggerFactory: ILoggerFactory,
-        @inject(TYPES.CarRepository) private carRepository: ICarRepository
+        @inject(TYPES.CarRepository) private carRepository: ICarRepository,
+        @inject(TYPES.LocationRepository) private locationRepository: ILocationRepository
     ) {
         this.logger = loggerFactory.create(`CarRouter`)
         this.router = new Router({
-            prefix: '/cars',
+            prefix: '/car',
         })
 
         this.router.get('/', this.getCars)
         this.router.get('/:id', this.getCarById)
+
         this.router.post('/', this.createCar)
+
         this.router.put('/:id', this.updateCar)
+        this.router.put('/:id/location', this.updateCarLocation)
+        
         this.router.delete('/:id', this.removeCar)
     }
 
@@ -66,9 +72,20 @@ export class CarRouter implements IRouter {
     private updateCar = (context: IRouterContext) => {
         const id = context.query.id
         const car: Partial<Car> = context.body
-        const updatedCar = this.carRepository.updateOne(id, car)
+        const updatedCar = this.carRepository.updateById(id, car)
         context.body = {
             car: updatedCar
+        }
+        context.status = 200
+    }
+
+    private updateCarLocation = (context: IRouterContext) => {
+        const carId = context.query.id
+        const location: Partial<Location> = context.body
+        const car = this.carRepository.findById(carId)
+        const updatedLocation = this.locationRepository.updateById(car.locationId, location)
+        context.body = {
+            location: updatedLocation
         }
         context.status = 200
     }
@@ -83,7 +100,7 @@ export class CarRouter implements IRouter {
             context.status = 404
             return
         }
-        this.carRepository.deleteOne(id)
+        this.carRepository.deleteById(id)
         context.status = 200
     }
 }

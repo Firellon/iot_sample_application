@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 
-import { Container } from 'inversify'
+import { Container, interfaces } from 'inversify'
 import { Logger, createLogger, LoggerOptions } from 'winston'
 
 import { ApplicationFactory, IApplicationFactory } from './ApplicationFactory'
@@ -8,6 +8,9 @@ import { CarRepository } from '../car'
 import { CarRouter } from '../car/CarRouter'
 import { LoggerFactory } from '../logging'
 import { TYPES } from '../inversify.types'
+import { DefaultRepository } from './DefaultRepository'
+import { WithId } from './WithId'
+import { LocationRepository, ILocationRepository } from '../location';
 
 export interface IContainerFactory {
     createApiContainer(): Container
@@ -26,6 +29,9 @@ export class ContainerFactory implements IContainerFactory {
 
         this.bindLoggingModules(container)
         this.bindCarModules(container)
+        this.bindLocationModules(container)
+        this.bindUserModules(container)
+        this.bindDemandModules(container)
         this.bindCoreModules(container)
 
         this.logger.info('createApiContainer > successfully finished')
@@ -50,7 +56,23 @@ export class ContainerFactory implements IContainerFactory {
             .inSingletonScope()
     }
 
+    private bindLocationModules(container: Container) {
+        container
+            .bind<ILocationRepository>(TYPES.LocationRepository)
+            .to(LocationRepository)
+            .inSingletonScope()
+    }
+
+    private bindUserModules(container: Container) {}
+
+    private bindDemandModules(container: Container) {}
+
     private bindCoreModules(container: Container) {
+        container
+            .bind<interfaces.Factory<DefaultRepository<any>>>(TYPES.DefaultRepositoryFactory)
+            .toFactory<DefaultRepository<any>>(() => {
+                return <T extends WithId>(name: string) => new DefaultRepository<T>(name)
+            })
         container
             .bind<IApplicationFactory>(TYPES.ApplicationFactory)
             .to(ApplicationFactory)
