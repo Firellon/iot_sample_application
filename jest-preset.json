@@ -1,0 +1,18 @@
+{
+    "transform": {
+        "^.+\\.tsx?$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+        "src/**/*.{ts,tsx}",
+        "!src/**/Types.ts",
+        "!src/**/DependencyInjection.ts",
+        "!src/fixtures/**/*.ts",
+        "!src/env*.ts",
+        "!src/kernel.ts",
+        "!src/logger.ts"
+    ],
+    "coverageReporters": ["text", "html", "json-summary"],
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    "testPathIgnorePatterns": ["/node_modules/"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"]
+}

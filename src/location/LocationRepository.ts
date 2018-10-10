@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify'
-import _ = require('lodash')
+import * as _ from 'lodash'
 
 import { Location } from './Location'
 import { Maybe } from '../core/Maybe'
@@ -32,11 +32,19 @@ export class LocationRepository implements ILocationRepository {
         return this.defaultRepository.insertOne(location)
     }
 
+    insertMany(locations: Location[]): Location[] {
+        return this.defaultRepository.insertMany(locations)
+    }
+
     updateById(id: string, locationUpdate: Partial<Location>): Location {
         return this.defaultRepository.updateById(id, locationUpdate)
     }
 
     deleteById(id: string): void {
         return this.defaultRepository.deleteById(id)
+    }
+
+    clear(): void {
+        return this.defaultRepository.clear()
     }
 }

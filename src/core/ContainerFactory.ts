@@ -1,23 +1,22 @@
 import 'reflect-metadata'
 
 import { Container, interfaces } from 'inversify'
-import { Logger, createLogger, LoggerOptions } from 'winston'
 
 import { ApplicationFactory, IApplicationFactory } from './ApplicationFactory'
 import { CarRepository } from '../car'
 import { CarRouter } from '../car/CarRouter'
-import { LoggerFactory } from '../logging'
+import { LoggerFactory, ILogger } from '../logging'
 import { TYPES } from '../inversify.types'
 import { DefaultRepository } from './DefaultRepository'
 import { WithId } from './WithId'
-import { LocationRepository, ILocationRepository } from '../location';
+import { LocationRepository, ILocationRepository } from '../location'
 
 export interface IContainerFactory {
     createApiContainer(): Container
 }
 
 export class ContainerFactory implements IContainerFactory {
-    private logger: Logger
+    private logger: ILogger
 
     constructor() {
         // TODO: use ENV var for log level
@@ -63,9 +62,9 @@ export class ContainerFactory implements IContainerFactory {
             .inSingletonScope()
     }
 
-    private bindUserModules(container: Container) {}
+    private bindUserModules(_container: Container) {}
 
-    private bindDemandModules(container: Container) {}
+    private bindDemandModules(_container: Container) {}
 
     private bindCoreModules(container: Container) {
         container

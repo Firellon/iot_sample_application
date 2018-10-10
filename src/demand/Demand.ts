@@ -1,13 +1,13 @@
-import { Car } from "../car/Car";
-import { Location } from "../location/Location";
+import { Car } from '../car'
+import { Location } from '../location'
 
 export type Demand = {
-    userId: string;
+    userId: string
 
-    pickUpLocation: Location;
-    dropOffLocation: Location;
-    earliestPickUpDate: Date;
-    latestDropOffDate: Date;
+    pickUpLocation: Location
+    dropOffLocation: Location
+    earliestPickUpDate: Date
+    latestDropOffDate: Date
 
-    desiredCarFeatures: Partial<Car>;
-};
+    desiredCarFeatures: Partial<Car>
+}

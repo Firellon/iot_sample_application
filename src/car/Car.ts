@@ -7,3 +7,15 @@ export interface Car {
     infotainmentSystem: string
     interiorDesign: string
 }
+
+export const generateCar = (props: Partial<Car> = {}): Car =>  {
+    return Object.assign({
+        id: '',
+        locationId: '',
+
+        model: '',
+        engine: '',
+        infotainmentSystem: '',
+        interiorDesign: ''
+    }, props)
+}

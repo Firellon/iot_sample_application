@@ -8,8 +8,10 @@ export interface IDefaultRepository<T extends WithId> {
     findAll(): T[]
     findById(id: string): Maybe<T>
     insertOne(entity: T): T
+    insertMany(entities: T[]): T[]
     updateById(id: string, entityUpdate: Partial<T>): T
     deleteById(id: string): void
+    clear(): void
 }
 
 @injectable()
@@ -39,6 +41,11 @@ export class DefaultRepository<T extends WithId> implements IDefaultRepository<T
         return entity
     }
 
+    insertMany(entities: T[]): T[] {
+        return entities.map(entity => {
+            return this.insertOne(entity)
+        })
+    }
     updateById(id: string, entityUpdate: Partial<T>): T {
         const existingEntity = this.findById(id)
         if (!existingEntity) {
@@ -55,5 +62,9 @@ export class DefaultRepository<T extends WithId> implements IDefaultRepository<T
             throw new Error(`${this.name} ${id} not found`)
         }
         this.db.delete(id)
+    }
+
+    clear(): void {
+        this.db = new Map()
     }
 }

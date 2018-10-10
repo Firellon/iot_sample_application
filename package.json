@@ -1,52 +1,80 @@
 {
-  "name": "iot_sample_application",
-  "version": "1.0.0",
-  "description": "Container for best practices for Node.js/Typescript backend app",
-  "main": "index.js",
-  "repository": "git@github.com:Firellon/iot_sample_application.git",
-  "author": "Pavel Tugolukov <macfirellon@gmail.com>",
-  "license": "MIT",
-  "private": false,
-  "engines": {
-    "node": ">=10.0.0",
-    "yarn": ">=1.5.1"
-  },
-  "scripts": {
-    "build": "tsc --rootDir ./",
-    "build:watch": "tsc --rootDir ./ -w",
-    "circular": "madge --circular dist/",
-    "clean": "rm -fr dist",
-    "precoverage": "mkdir -p coverage && touch coverage/coverage-summary.json",
-    "coverage": "jest --coverage --no-cache spec --reporters=\"default\" \"jest-ratchet\" \"jest-junit\"",
-    "coverage:watch": "yarn coverage --watch",
-    "lint": "tslint -p .",
-    "postinstall": "yarn build",
-    "prebuild": "yarn clean",
-    "pretest": "yarn lint && yarn build",
-    "start": "node --harmony index.js",
-    "test": "jest spec --forceExit --runInBand",
-    "test:watch": "yarn test --watch"
-  },
-  "dependencies": {
-    "@types/inversify": "^2.0.33",
-    "@types/json-stringify-safe": "^5.0.0",
-    "@types/koa": "^2.0.46",
-    "@types/koa-bodyparser": "^5.0.1",
-    "@types/koa-router": "^7.0.32",
-    "@types/lodash": "^4.14.116",
-    "@types/node": "^10.11.5",
-    "commander": "^2.19.0",
-    "inversify": "^4.13.0",
-    "json-stringify-safe": "^5.0.1",
-    "koa": "^2.5.3",
-    "koa-bodyparser": "^4.2.1",
-    "koa-router": "^7.4.0",
-    "lodash": "^4.17.11",
-    "node-dependency-injection": "^2.2.1",
-    "prettier": "^1.14.3",
-    "reflect-metadata": "^0.1.12",
-    "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.1.1",
-    "winston": "2.4.3"
-  }
+    "name": "iot_sample_application",
+    "version": "1.0.0",
+    "description": "Container for best practices for Node.js/Typescript backend app",
+    "main": "index.js",
+    "repository": "git@github.com:Firellon/iot_sample_application.git",
+    "author": "Pavel Tugolukov <macfirellon@gmail.com>",
+    "license": "MIT",
+    "private": false,
+    "engines": {
+        "node": ">=10.0.0",
+        "yarn": ">=1.5.1"
+    },
+    "scripts": {
+        "build": "tsc --rootDir ./",
+        "build:watch": "tsc --rootDir ./ -w",
+        "circular": "madge --circular dist/",
+        "clean": "rm -fr dist",
+        "precoverage": "mkdir -p coverage && touch coverage/coverage-summary.json",
+        "coverage": "jest --coverage --no-cache spec --reporters=\"default\" \"jest-ratchet\" \"jest-junit\"",
+        "coverage:watch": "yarn coverage --watch",
+        "lint": "tslint -p .",
+        "postinstall": "yarn build",
+        "prebuild": "yarn clean",
+        "pretest": "yarn lint && yarn build",
+        "start": "node --harmony index.js",
+        "test": "jest spec --forceExit --runInBand",
+        "test:watch": "yarn test --watch"
+    },
+    "dependencies": {
+        "@types/chai": "^4.1.6",
+        "@types/chai-http": "^3.0.5",
+        "@types/inversify": "^2.0.33",
+        "@types/jest": "^23.3.5",
+        "@types/json-stringify-safe": "^5.0.0",
+        "@types/koa": "^2.0.46",
+        "@types/koa-bodyparser": "^5.0.1",
+        "@types/koa-router": "^7.0.32",
+        "@types/lodash": "^4.14.116",
+        "@types/node": "^10.11.5",
+        "@types/winston": "^2.4.4",
+        "chai": "^4.2.0",
+        "chai-http": "^4.2.0",
+        "commander": "^2.19.0",
+        "inversify": "^4.13.0",
+        "jest": "^23.6.0",
+        "jest-junit": "^5.2.0",
+        "json-stringify-safe": "^5.0.1",
+        "koa": "^2.5.3",
+        "koa-bodyparser": "^4.2.1",
+        "koa-router": "^7.4.0",
+        "lodash": "^4.17.11",
+        "node-dependency-injection": "^2.2.1",
+        "prettier": "^1.14.3",
+        "reflect-metadata": "^0.1.12",
+        "ts-jest": "^23.10.4",
+        "tslint": "^5.11.0",
+        "tslint-config-prettier": "^1.15.0",
+        "typescript": "^3.1.1",
+        "winston": "2.4.3"
+    },
+    "jest-junit": {
+        "output": "./coverage/junit/junit.xml"
+    },
+    "jest": {
+        "preset": "./jest-preset.json",
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+        "testURL": "http://localhost"
+    },
+    "lint-staged": {
+        "src/**/*.{js,ts,tsx,css}": [
+            "prettier --write",
+            "git add"
+        ],
+        "src/**/*.{ts,tsx}": [
+            "tslint --type-check -p tsconfig.json",
+            "git add"
+        ]
+    }
 }

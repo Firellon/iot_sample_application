@@ -1,5 +1,5 @@
 import { injectable, inject } from 'inversify'
-import _ = require('lodash')
+import * as _ from 'lodash'
 
 import { Car } from './Car'
 import { TYPES } from '../inversify.types'
@@ -31,11 +31,19 @@ export class CarRepository implements ICarRepository {
         return this.defaultRepository.insertOne(car)
     }
 
+    insertMany(cars: Car[]): Car[] {
+        return this.defaultRepository.insertMany(cars)
+    }
+
     updateById(id: string, carUpdate: Partial<Car>): Car {
         return this.defaultRepository.updateById(id, carUpdate)
     }
 
     deleteById(id: string): void {
         return this.defaultRepository.deleteById(id)
+    }
+
+    clear(): void {
+        return this.defaultRepository.clear()
     }
 }

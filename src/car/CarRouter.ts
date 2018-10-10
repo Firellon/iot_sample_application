@@ -22,7 +22,7 @@ export class CarRouter implements IRouter {
     ) {
         this.logger = loggerFactory.create(`CarRouter`)
         this.router = new Router({
-            prefix: '/car',
+            prefix: '/cars',
         })
 
         this.router.get('/', this.getCars)
@@ -32,11 +32,12 @@ export class CarRouter implements IRouter {
 
         this.router.put('/:id', this.updateCar)
         this.router.put('/:id/location', this.updateCarLocation)
-        
+
         this.router.delete('/:id', this.removeCar)
     }
 
     private getCars = (context: IRouterContext) => {
+        this.logger.info(`getCars`)
         const cars = this.carRepository.findAll()
         context.body = {
             cars
@@ -83,6 +84,10 @@ export class CarRouter implements IRouter {
         const carId = context.query.id
         const location: Partial<Location> = context.body
         const car = this.carRepository.findById(carId)
+        if (!car) {
+            context.status = 404
+            return
+        }
         const updatedLocation = this.locationRepository.updateById(car.locationId, location)
         context.body = {
             location: updatedLocation

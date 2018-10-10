@@ -3,7 +3,7 @@ import * as Koa from 'koa'
 import * as bodyParser from 'koa-bodyparser'
 import { TYPES } from '../inversify.types'
 import { IRouter } from './IRouter'
-import { ILogger, ILoggerFactory, LoggerFactory } from '../logging'
+import { ILogger, ILoggerFactory } from '../logging'
 
 export interface IApplicationFactory {
     create(): Koa
@@ -29,6 +29,7 @@ export class ApplicationFactory implements IApplicationFactory {
                 `Request (${context.url}), headers: ${JSON.stringify(context.headers)}, from: ${context.origin}`
             )
             this.logger.info(`Application received request on ${context.url} from ${context.origin}`)
+            await next()
         })
 
         // Endpoints
