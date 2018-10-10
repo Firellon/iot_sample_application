@@ -5,7 +5,7 @@ import { injectable, inject } from 'inversify'
 import { Car } from './Car'
 import { ICarRepository } from './CarRepository'
 import { ILogger, ILoggerFactory } from '../logging'
-import { IRouter } from '../core'
+import { IRouter, Maybe } from '../core'
 import { Location, ILocationRepository } from '../location'
 import { TYPES } from '../inversify.types'
 
@@ -46,7 +46,7 @@ export class CarRouter implements IRouter {
     }
 
     private getCarById = (context: IRouterContext) => {
-        const id = context.query.id
+        const id = context.params.id
         const car = this.carRepository.findById(id)
         if (!car) {
             context.body = {
@@ -62,7 +62,13 @@ export class CarRouter implements IRouter {
     }
 
     private createCar = (context: IRouterContext) => {
-        const car: Car = context.body
+        const car = context.request.body as Maybe<Car>
+        this.logger.info(`createCar > ${JSON.stringify(car)}`)
+        if (!car) {
+            context.status = 403
+            return
+        }
+
         const newCar = this.carRepository.insertOne(car)
         context.body = {
             car: newCar
@@ -71,8 +77,9 @@ export class CarRouter implements IRouter {
     }
 
     private updateCar = (context: IRouterContext) => {
-        const id = context.query.id
-        const car: Partial<Car> = context.body
+        const id = context.params.id
+        const car = context.request.body as Partial<Car>
+        this.logger.info(`updateCar > ${id} ${JSON.stringify(car)}`)
         const updatedCar = this.carRepository.updateById(id, car)
         context.body = {
             car: updatedCar
@@ -81,7 +88,7 @@ export class CarRouter implements IRouter {
     }
 
     private updateCarLocation = (context: IRouterContext) => {
-        const carId = context.query.id
+        const carId = context.params.id
         const location: Partial<Location> = context.body
         const car = this.carRepository.findById(carId)
         if (!car) {
@@ -96,7 +103,7 @@ export class CarRouter implements IRouter {
     }
 
     private removeCar = (context: IRouterContext) => {
-        const id = context.query.id
+        const id = context.params.id
         const car = this.carRepository.findById(id)
         if (!car) {
             context.body = {
